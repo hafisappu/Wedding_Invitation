@@ -1,27 +1,22 @@
-# Deploying to Cloudflare Pages
+# Deploying to Cloudflare Pages (Static Site Mode)
 
-Since you have pushed the repository to GitHub, you can deploy the wedding invitation website to **Cloudflare Pages** for free.
-
----
-
-## ⚠️ Important Note on RSVP Database Storage
-
-Because Cloudflare Pages runs your Next.js application in a serverless/edge environment (Cloudflare Workers), **writing to a local file (`data/rsvps.json`) is not supported** (the serverless filesystem is read-only).
-
-To store RSVPs in production:
-1. Create a free **Supabase** or **Firebase** project.
-2. Create an `rsvps` table in Supabase with the following columns:
-   - `id` (int8, primary key, auto-increment)
-   - `name` (text)
-   - `phone` (text)
-   - `guests` (int4 or numeric)
-   - `attending` (boolean)
-   - `createdAt` (timestamp / timestamptz)
-3. Provide your database credentials to Cloudflare Pages as Environment Variables (see Step 3 below).
+This website has been configured as a **100% Static HTML Site**. This means it requires **no database configuration (Supabase/Firebase)** and **no server-side Cloudflare Workers**. It is extremely fast, highly secure, and completely free to host.
 
 ---
 
-## 🚀 Step-by-Step Deployment
+## 📩 How RSVP Works Statically
+
+Instead of saving to a database, when guests fill in the RSVP Form and click "Submit RSVP":
+1. A beautiful burst of gold confetti triggers on the screen.
+2. The site opens a pre-filled **WhatsApp** message with the guest's RSVP responses (Name, Phone, Guest count, Attendance) directed to the wedding receiver's phone number.
+3. The guest simply clicks "Send" on WhatsApp to submit their confirmation.
+
+> [!NOTE]
+> To change the phone number that receives RSVPs, open the file [src/components/RSVPForm.tsx](file:///c:/Users/hafis/Desktop/Safrad/src/components/RSVPForm.tsx) and change the `RSVP_RECEIVER_PHONE` constant (include your country code, e.g. `+919495123456`).
+
+---
+
+## 🚀 Step-by-Step Deployment on Cloudflare Pages
 
 ### Step 1: Connect your GitHub Account
 1. Log in to the [Cloudflare Dashboard](https://dash.cloudflare.com/).
@@ -30,32 +25,19 @@ To store RSVPs in production:
 4. Click **Connect to Git** and choose the repository `Wedding_Invitation`.
 
 ### Step 2: Configure Build Settings
-Under the build configuration screen, enter the following settings:
-* **Project Name**: `wedding-invitation` (or any custom name)
-* **Production Branch**: `main`
-* **Framework Preset**: **Next.js**
-* **Build Command**: `npx @cloudflare/next-on-pages` (or standard `npm run build` if using Static HTML export mode)
-* **Build Output Directory**: `.vercel/output` (for edge SSR) or `out` (if configured for static HTML export)
+Configure Cloudflare Pages with these build parameters:
+* **Framework Preset**: **Next.js** (or *None* / *Create React App*)
+* **Build Command**: `npm run build`
+* **Build Output Directory**: `out`
 
-> [!TIP]
-> If you wish to run the app as a fully **Static Site** (no server-side runtime, which is even easier and faster on Cloudflare):
-> 1. Add `output: 'export'` to your `next.config.ts` file:
->    ```typescript
->    const nextConfig = {
->      output: 'export',
->    };
->    ```
-> 2. Change the RSVP Form submission to call Supabase directly from the client side rather than using Server Actions.
-> 3. Cloudflare Pages will build it using standard static page hosting!
+*(Make sure the build output directory is set to **`out`** rather than `.next` or `.open-next`!)*
 
-### Step 3: Add Environment Variables
-Add your database environment variables under **Build settings (optional) > Environment variables**:
+### Step 3: Add Node Environment Variable
+Scroll down to the **Environment variables** section and add:
+* **Variable Name**: `NODE_VERSION`
+* **Value**: `20`
 
-| Variable Name | Description | Value |
-| :--- | :--- | :--- |
-| `SUPABASE_URL` | Your Supabase Project API URL | `https://your-project.supabase.co` |
-| `SUPABASE_ANON_KEY` | Your Supabase Project Anon API key | `eyJhbGciOi...` |
-| `NODE_VERSION` | Set node version to 18 or 20 | `20` |
+*(No database credentials like `SUPABASE_URL` or Workers parameters are needed anymore!)*
 
-### Step 4: Deploy!
-Click **Save and Deploy**. Cloudflare will download the repository, run the build process, and provide you with a live `*.pages.dev` subdomain link to share your invitation!
+### Step 4: Save and Deploy!
+Click **Save and Deploy**. Cloudflare will compile the code statically and provide you with a live `*.pages.dev` subdomain link to share!
