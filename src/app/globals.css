@@ -1,0 +1,104 @@
+@import "tailwindcss";
+
+@theme {
+  --font-serif: var(--font-playfair), serif;
+  --font-script: var(--font-great-vibes), cursive;
+  --font-sans: var(--font-poppins), sans-serif;
+  --font-arabic: var(--font-amiri), serif;
+  
+  --color-gold: #B58A3A;
+  --color-gold-light: #E5D3B3;
+  --color-gold-dark: #8C6215;
+  --color-bg-base: #F8F7F4;
+  --color-text-dark: #222222;
+
+  --animate-sparkle: sparkle 3s ease-in-out infinite;
+  --animate-float: float 8s ease-in-out infinite;
+  --animate-float-delayed: float 8s ease-in-out infinite 4s;
+  --animate-pulse-slow: pulse-slow 5s ease-in-out infinite;
+}
+
+@keyframes sparkle {
+  0%, 100% { opacity: 0.1; transform: scale(0.8) translateY(0px); }
+  50% { opacity: 0.9; transform: scale(1.1) translateY(-10px); }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px) rotate(0deg); }
+  50% { transform: translateY(-15px) rotate(2deg); }
+}
+
+@keyframes pulse-slow {
+  0%, 100% { opacity: 0.2; transform: scale(1); }
+  50% { opacity: 0.5; transform: scale(1.05); }
+}
+
+/* Custom CSS utilities for premium styling */
+.gold-gradient-text {
+  background: linear-gradient(135deg, #8C6215 0%, #D4AF37 40%, #B58A3A 70%, #E5D3B3 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-size: 200% auto;
+  animation: shine 4s linear infinite;
+}
+
+@keyframes shine {
+  to {
+    background-position: 200% center;
+  }
+}
+
+.shadow-wedding {
+  box-shadow: 
+    0 15px 35px -5px rgba(181, 138, 58, 0.08), 
+    0 5px 15px -5px rgba(0, 0, 0, 0.03);
+}
+
+.shadow-premium {
+  box-shadow: 
+    0 25px 50px -12px rgba(181, 138, 58, 0.12),
+    0 8px 24px -8px rgba(0, 0, 0, 0.04);
+}
+
+.glassmorphism {
+  background: rgba(255, 255, 255, 0.88);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.6);
+}
+
+/* Scrollbar customization to keep it clean and minimal */
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #F8F7F4;
+}
+::-webkit-scrollbar-thumb {
+  background: #E5D3B3;
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #B58A3A;
+}
+
+/* Smooth page fade transition loading screen */
+.entrance-fade {
+  animation: pageFadeIn 1.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes pageFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(15px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.arabic-calligraphy {
+  font-family: Arial, sans-serif;
+  letter-spacing: 0.1em;
+}
