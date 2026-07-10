@@ -3,7 +3,9 @@
 import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { CheckCircle2, User, Phone, Users, Send } from "lucide-react";
-import { submitRSVP } from "@/app/actions/rsvp";
+// Change this to the phone number that should receive RSVPs (with country code, e.g. "+919000000000")
+const RSVP_RECEIVER_PHONE = "+919495123456"; 
+
 import confetti from "canvas-confetti";
 
 export default function RSVPForm() {
@@ -52,7 +54,7 @@ export default function RSVPForm() {
     })();
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!validate()) return;
 
@@ -60,28 +62,45 @@ export default function RSVPForm() {
     setSubmitStatus(null);
 
     try {
-      const response = await submitRSVP({
-        name,
-        phone,
-        guests: Number(guests),
-        attending: attending === true,
+      // Construct formatted message
+      const attendingText = attending ? "Yes, I Will Attend" : "No, I Cannot Attend";
+      
+      const messageText = 
+`*RSVP CONFIRMATION* 💍
+_Wedding of Safrad & Sheyba_
+
+*Name*: ${name.trim()}
+*Phone*: ${phone.trim()}
+*Guests*: ${guests}
+*Attending*: ${attendingText}
+
+Generated from Invitation Website.`;
+
+      const whatsappUrl = `https://api.whatsapp.com/send?phone=${encodeURIComponent(RSVP_RECEIVER_PHONE)}&text=${encodeURIComponent(messageText)}`;
+
+      // Success visual feedback
+      setSubmitStatus({
+        success: true,
+        message: "RSVP confirmed! Opening WhatsApp to send your message...",
       });
 
-      if (response.success) {
-        setSubmitStatus({ success: true, message: response.message });
-        triggerGoldConfetti();
-        // Reset form
-        setName("");
-        setPhone("");
-        setGuests(1);
-        setAttending(null);
-      } else {
-        setSubmitStatus({ success: false, message: response.message });
-      }
+      triggerGoldConfetti();
+
+      // Reset form fields
+      setName("");
+      setPhone("");
+      setGuests(1);
+      setAttending(null);
+
+      // Open WhatsApp chat in new window
+      setTimeout(() => {
+        window.open(whatsappUrl, "_blank");
+      }, 1000);
+
     } catch (err: any) {
       setSubmitStatus({
         success: false,
-        message: err.message || "Something went wrong. Please try again.",
+        message: "Failed to generate WhatsApp link. Please try again.",
       });
     } finally {
       setIsLoading(false);
